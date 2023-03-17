@@ -2,6 +2,8 @@
 
 Input:
 block_symbols   : Vector containing all possible (partitioned) block symbols
+                    Ex. [ ["a", "a"],  ["a", "b"], ["b", "a"], ["b", "b"]]
+                        instead of ["aa", "ab", "ba", "bb"]
 side_info_dict  : Dictionary mapping symbol => side information symbol
                     Ex. [a, b, c, γ, ϕ] => [e, e, e, g, g]
                         where e: English letters, g: Greek letters
@@ -12,8 +14,6 @@ side_informations   : Dictionary mapping block symbols => side information block
 function create_side_information_codebook(block_symbols, side_info_dict)
     side_informations = Dict();
 
-    # Concatenating symbols in each block
-    # blocks = [prod(block_symbol) for block_symbol in block_symbols];
     for block_symbol in block_symbols
         side_info = "";
         for symbol in block_symbol
@@ -46,7 +46,7 @@ function side_information_table(block_symbols, probabilities, side_information_m
     side_2_prob = dict_list(unique_side_info2)
     for (idx, source_block) in enumerate(block_symbols)
         side_info = side_information_mapping[source_block]
-        println("Now collecting: $source_block -> $(probabilities[idx]) for $side_info")
+        # println("Now collecting: $source_block -> $(probabilities[idx]) for $side_info")
         push!(side_2_block[side_info], string(source_block))
         push!(side_2_prob[side_info], probabilities[idx])
     end
@@ -59,4 +59,17 @@ function side_information_table(block_symbols, probabilities, side_information_m
     end
 
     return side_2_block, side_2_prob
+end
+
+#=
+side_2_encoder : Dictionary mapping
+                    Side information block symbols => Codeblock Encoder given Side Information
+=#
+function unroll_side_info_encoders(side_2_encoder)
+    encoder_side_info = Dict();
+    for (side_info, encoder) in side_2_encoder
+        merge!(encoder_side_info, encoder)
+    end
+
+    return encoder_side_info
 end
