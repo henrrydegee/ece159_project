@@ -29,15 +29,15 @@ Output:
 Huffman Tree (::huffman_node) starting from the parent/root
 =#
 function construct_huffman_tree(P_sorted_dict)
-    trees = [huffman_node( symbol, probability) for (symbol, probability) in P_sorted_dict]
+    trees = [huffman_node( symbol, probability) for (symbol, probability) in P_sorted_dict];
     while length(trees) > 1
-        sort!(trees, lt = (x, y) -> x.probability < y.probability)
-        smallest = popfirst!(trees)
-        next_smallest = popfirst!(trees)
-        tree = huffman_node("", smallest.probability + next_smallest.probability)
-        tree.left = smallest
-        tree.right = next_smallest
-        push!(trees, tree )
+        sort!(trees, lt = (x, y) -> x.probability < y.probability);
+        smallest = popfirst!(trees);
+        next_smallest = popfirst!(trees);
+        tree = huffman_node("", smallest.probability + next_smallest.probability);
+        tree.left = smallest;
+        tree.right = next_smallest;
+        push!(trees, tree );
     end
     return trees[1]
 end
@@ -60,20 +60,20 @@ encoder : Dictionary to map source symbol => codeword
         if pmf does not change
 =#
 function build_encoder(node, code, encoder)
-    code *= "0"
+    code *= "0";
     if ~(isnothing(node.left))
-        build_encoder(node.left, code, encoder)
+        build_encoder(node.left, code, encoder);
     end
-    code = code[1:end-1]
+    code = code[1:end-1];
 
-    code *= "1"
+    code *= "1";
     if ~(isnothing(node.right))
-        build_encoder(node.right, code, encoder)
+        build_encoder(node.right, code, encoder);
     end
-    code = code[1:end-1]
-    encoder[node.symbol] = code
+    code = code[1:end-1];
+    encoder[node.symbol] = code;
 
-    delete!(encoder, "")
+    delete!(encoder, "");
 end
 
 #=
@@ -95,16 +95,16 @@ function decode_huffman(huffman_tree, codeword)
     for idx in eachindex(codeword) # Parsing each bin/char of codeword string
         if string(codeword[idx]) == "0" && ~( is_leaf(curr) )
             println("Going left")
-            curr = curr.left
+            curr = curr.left;
         elseif string(codeword[idx]) == "1" && ~( is_leaf(curr) )
             println("Going Right")
-            curr = curr.right
+            curr = curr.right;
         end
 
         if is_leaf(curr)
             println("Successfuly Decoded: $(curr.symbol)")
-            ans *= curr.symbol
-            curr = huffman_tree
+            ans *= curr.symbol;
+            curr = huffman_tree;
         end
     end
 
